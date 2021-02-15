@@ -142,7 +142,7 @@ typedef struct {
         eddystone_url_t url;
         eddystone_tlm_t tlm;
     } u;
-} eddystone_t;
+} __attribute__((packed)) eddystone_t;
 
 static eddystone_t *eddystone_data_get(uint8_t *adv_data, uint8_t adv_data_len,
     uint8_t *eddystone_len)
@@ -480,6 +480,8 @@ broadcaster_ops_t *broadcaster_ops_get(uint8_t *adv_data, size_t adv_data_len)
     for (ops = broadcaster_ops; *ops; ops++)
     {
         if ((*ops)->is_broadcaster(adv_data, adv_data_len))
+            ESP_LOGI(TAG, "Matched a broadcaster %s (%p) to:", (*ops)->name, ops);
+            ESP_LOG_BUFFER_HEX(TAG, adv_data, adv_data_len);
             return (*ops);
     }
 

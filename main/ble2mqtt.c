@@ -286,6 +286,9 @@ static void ble_on_broadcaster_discovered(mac_addr_t mac, uint8_t *adv_data,
 {
     char *mac_str = strdup(mactoa(mac));
     char rssi_str[6];
+    ESP_LOGI(TAG, "Handling broadcaster(" MAC_FMT ", %p, %u, %d, %p)",
+        MAC_PARAM(mac), adv_data, adv_data_len, rssi, ops);
+    ESP_LOG_BUFFER_HEX(TAG, adv_data, adv_data_len);
     ESP_LOGI(TAG, "Discovered %s broadcaster", ops->name);
 
     ble_on_broadcaster_metadata("Type", ops->name, mac_str);
@@ -688,8 +691,9 @@ static void _ble_on_broadcaster_discovered(mac_addr_t mac, uint8_t *adv_data,
     event->ble_broadcaster_discovered.rssi = rssi;
     event->ble_broadcaster_discovered.ops = ops;
 
-    ESP_LOGD(TAG, "Queuing event BLE_BROADCASTER_DISCOVERED (" MAC_FMT ", "
-        "%p, %u, %d)", MAC_PARAM(mac), adv_data, adv_data_len, rssi);
+    ESP_LOGI(TAG, "Queuing event BLE_BROADCASTER_DISCOVERED (" MAC_FMT ", "
+        "%p, %u, %d, %p)", MAC_PARAM(mac), event->ble_broadcaster_discovered.adv_data, event->ble_broadcaster_discovered.adv_data_len, rssi, ops);
+    ESP_LOG_BUFFER_HEX(TAG, event->ble_broadcaster_discovered.adv_data, event->ble_broadcaster_discovered.adv_data_len);
     xQueueSend(event_queue, &event, portMAX_DELAY);
 }
 
